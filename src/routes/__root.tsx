@@ -88,10 +88,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "Wisdom Share — Learn. Share. Grow Together." },
       {
         property: "og:description",
-        content: "Share notes, connect with learners, and study with AI.",
+        content: "The AI-powered educational social network. Share study materials, connect with learners, and get instant help from an AI study assistant.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Wisdom Share — Learn. Share. Grow Together." },
+      { name: "twitter:description", content: "The AI-powered educational social network. Share study materials, connect with learners, and get instant help from an AI study assistant." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/937ff355-82ca-4077-9316-3ded771f3563/id-preview-9f067384--b474f203-6143-4094-8ac9-4df9dd11de0b.lovable.app-1783534171447.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/937ff355-82ca-4077-9316-3ded771f3563/id-preview-9f067384--b474f203-6143-4094-8ac9-4df9dd11de0b.lovable.app-1783534171447.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
