@@ -101,7 +101,7 @@ function HomePage() {
             <h3 className="flex items-center gap-2 font-semibold"><TrendingUp className="size-4 text-secondary" /> Trending topics</h3>
             <div className="mt-3 flex flex-wrap gap-2">
               {trending.length === 0 ? <p className="text-xs text-muted-foreground">Nothing trending yet</p> :
-                trending.map((t: string) => (
+                (trending as string[]).map((t) => (
                   <span key={t} className="rounded-full bg-accent px-3 py-1 text-xs">#{t}</span>
                 ))}
             </div>
