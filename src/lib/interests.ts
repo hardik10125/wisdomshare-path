@@ -1,0 +1,18 @@
+export const INTERESTS = [
+  "Programming",
+  "Java",
+  "Python",
+  "AI",
+  "Machine Learning",
+  "Data Science",
+  "Web Development",
+  "UI/UX",
+  "Cyber Security",
+  "Cloud Computing",
+  "Android",
+  "Aptitude",
+  "Mathematics",
+  "English",
+  "Interview Preparation",
+  "Competitive Programming",
+] as const;
