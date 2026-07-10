@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedUploadRouteImport } from './routes/_authenticated/upload'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
+import { Route as AuthenticatedSavedRouteImport } from './routes/_authenticated/saved'
 import { Route as AuthenticatedInterestsRouteImport } from './routes/_authenticated/interests'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedGamesRouteImport } from './routes/_authenticated/games'
@@ -49,6 +50,11 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
 const AuthenticatedSearchRoute = AuthenticatedSearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSavedRoute = AuthenticatedSavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedInterestsRoute = AuthenticatedInterestsRouteImport.update({
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/games': typeof AuthenticatedGamesRoute
   '/home': typeof AuthenticatedHomeRoute
   '/interests': typeof AuthenticatedInterestsRoute
+  '/saved': typeof AuthenticatedSavedRoute
   '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/upload': typeof AuthenticatedUploadRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/games': typeof AuthenticatedGamesRoute
   '/home': typeof AuthenticatedHomeRoute
   '/interests': typeof AuthenticatedInterestsRoute
+  '/saved': typeof AuthenticatedSavedRoute
   '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/upload': typeof AuthenticatedUploadRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/_authenticated/games': typeof AuthenticatedGamesRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/interests': typeof AuthenticatedInterestsRoute
+  '/_authenticated/saved': typeof AuthenticatedSavedRoute
   '/_authenticated/search': typeof AuthenticatedSearchRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/upload': typeof AuthenticatedUploadRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/games'
     | '/home'
     | '/interests'
+    | '/saved'
     | '/search'
     | '/settings'
     | '/upload'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/games'
     | '/home'
     | '/interests'
+    | '/saved'
     | '/search'
     | '/settings'
     | '/upload'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/_authenticated/games'
     | '/_authenticated/home'
     | '/_authenticated/interests'
+    | '/_authenticated/saved'
     | '/_authenticated/search'
     | '/_authenticated/settings'
     | '/_authenticated/upload'
@@ -218,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSearchRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/saved': {
+      id: '/_authenticated/saved'
+      path: '/saved'
+      fullPath: '/saved'
+      preLoaderRoute: typeof AuthenticatedSavedRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/interests': {
       id: '/_authenticated/interests'
       path: '/interests'
@@ -268,6 +287,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedGamesRoute: typeof AuthenticatedGamesRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedInterestsRoute: typeof AuthenticatedInterestsRoute
+  AuthenticatedSavedRoute: typeof AuthenticatedSavedRoute
   AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedUploadRoute: typeof AuthenticatedUploadRoute
@@ -280,6 +300,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedGamesRoute: AuthenticatedGamesRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedInterestsRoute: AuthenticatedInterestsRoute,
+  AuthenticatedSavedRoute: AuthenticatedSavedRoute,
   AuthenticatedSearchRoute: AuthenticatedSearchRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedUploadRoute: AuthenticatedUploadRoute,
@@ -298,13 +319,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
