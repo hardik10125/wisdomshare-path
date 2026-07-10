@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, MessageCircle, Bookmark, Share2, FileText } from "lucide-react";
+import { Heart, MessageCircle, Bookmark, Share2, FileText, Download } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ export function PostCard({ post }: { post: FeedPost }) {
   const qc = useQueryClient();
   const [showComments, setShowComments] = useState(false);
   const [comment, setComment] = useState("");
+  const [downloading, setDownloading] = useState(false);
   const likeFn = useServerFn(toggleLike);
   const saveFn = useServerFn(toggleSave);
   const commentFn = useServerFn(addComment);
@@ -47,12 +48,53 @@ export function PostCard({ post }: { post: FeedPost }) {
     enabled: showComments,
   });
 
-  const share = () => {
-    const url = typeof window !== "undefined" ? `${window.location.origin}/profile/${post.author.username}` : "";
-    if (typeof navigator !== "undefined" && navigator.share) {
-      navigator.share({ title: `${post.author.full_name} on Wisdom Share`, url }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(url).then(() => toast.success("Link copied"));
+  const share = async () => {
+    const url = typeof window !== "undefined"
+      ? `${window.location.origin}/profile/${post.author.username}`
+      : "";
+    const shareData = {
+      title: `${post.author.full_name} on Wisdom Share`,
+      text: post.caption || "Check out this study post on Wisdom Share",
+      url,
+    };
+    try {
+      if (typeof navigator !== "undefined" && navigator.share && navigator.canShare?.(shareData)) {
+        await navigator.share(shareData);
+        return;
+      }
+    } catch {
+      /* fall through to clipboard */
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link copied to clipboard");
+    } catch {
+      toast.error("Could not share. Copy link: " + url);
+    }
+  };
+
+  const download = async () => {
+    if (!post.media_url) return;
+    setDownloading(true);
+    try {
+      const res = await fetch(post.media_url);
+      if (!res.ok) throw new Error("Download failed");
+      const blob = await res.blob();
+      const ext = post.media_type === "pdf" ? "pdf" : (blob.type.split("/")[1] || "jpg");
+      const filename = `wisdom-share-${post.author.username}-${post.id.slice(0, 8)}.${ext}`;
+      const objUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(objUrl), 1000);
+      toast.success(post.media_type === "pdf" ? "PDF downloaded" : "Image saved");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Download failed");
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -111,11 +153,24 @@ export function PostCard({ post }: { post: FeedPost }) {
           <MessageCircle className="size-4" />
           <span className="text-xs">{post.comment_count}</span>
         </Button>
-        <Button variant="ghost" size="sm" onClick={share} className="gap-2">
+        <Button variant="ghost" size="sm" onClick={share} className="gap-2" aria-label="Share">
           <Share2 className="size-4" />
         </Button>
+        {post.media_url && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={download}
+            disabled={downloading}
+            className="gap-2"
+            aria-label="Download"
+            title={post.media_type === "pdf" ? "Download PDF" : "Save to gallery"}
+          >
+            <Download className={cn("size-4", downloading && "animate-pulse")} />
+          </Button>
+        )}
         <div className="flex-1" />
-        <Button variant="ghost" size="sm" onClick={() => save.mutate()}>
+        <Button variant="ghost" size="sm" onClick={() => save.mutate()} aria-label="Save">
           <Bookmark className={cn("size-4", post.saved_by_me && "fill-primary text-primary")} />
         </Button>
       </div>

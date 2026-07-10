@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate, useRouter } from "@tanstack/react-router";
-import { Home, Search, Bot, Upload, User, Settings, LogOut, Menu, Flame } from "lucide-react";
+import { Home, Search, Bot, Upload, User, Settings, LogOut, Menu, Flame, Bookmark } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -18,7 +18,8 @@ const navItems = [
   { to: "/search", label: "Search", icon: Search },
   { to: "/ai-chat", label: "AI Chat", icon: Bot },
   { to: "/upload", label: "Upload", icon: Upload },
-  { to: "/games", label: "Knowledge Streak", icon: Flame },
+  { to: "/saved", label: "Saved", icon: Bookmark },
+  { to: "/games", label: "Quiz Game", icon: Flame },
   { to: "/profile", label: "Profile", icon: User },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
